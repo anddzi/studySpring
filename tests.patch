@@ -1,0 +1,132 @@
+Subject: [PATCH] tests
+---
+Index: application.yaml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/application.yaml b/application.yaml
+new file mode 100644
+--- /dev/null	(date 1706798657902)
++++ b/application.yaml	(date 1706798657902)
+@@ -0,0 +1,9 @@
++spring:
++  jpa:
++    open-in-view: false
++    hibernate:
++      ddl-auto: create-drop
++  datasource:
++    url: jdbc:postgresql://localhost:15432/backend
++    username: backend
++    password: backend
+Index: src/test/java/com/example/demo/services/CustomerServiceTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/java/com/example/demo/services/CustomerServiceTest.java b/src/test/java/com/example/demo/services/CustomerServiceTest.java
+new file mode 100644
+--- /dev/null	(date 1706798533458)
++++ b/src/test/java/com/example/demo/services/CustomerServiceTest.java	(date 1706798533458)
+@@ -0,0 +1,27 @@
++package com.example.demo.services;
++
++import com.example.demo.entities.Customer;
++import org.junit.jupiter.api.Test;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.boot.test.context.SpringBootTest;
++
++import static org.junit.jupiter.api.Assertions.assertEquals;
++import static org.junit.jupiter.api.Assertions.assertNotNull;
++
++@SpringBootTest
++public class CustomerServiceTest {
++    @Autowired
++    private CustomerService customerService;
++
++    @Test
++    public void testCreateCustomer() {
++        Customer customer = customerService.createCustomer("aaa");
++        assertNotNull(customer.getId());
++        assertEquals(customer.getName(), "aaa");
++    }
++}
++// CustomerService -> CustomerRepository
++// jdbc
++// hibernate
++// annotations - Bean, Service, Repository, Controller, RestController
++// xml vs boot
+Index: src/main/java/com/example/demo/entities/Customer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/demo/entities/Customer.java b/src/main/java/com/example/demo/entities/Customer.java
+--- a/src/main/java/com/example/demo/entities/Customer.java	(revision 1fcb8d518e9c5a2722abe6f5531248e4fc32ac34)
++++ b/src/main/java/com/example/demo/entities/Customer.java	(date 1706798533438)
+@@ -7,9 +7,10 @@
+ import java.util.HashSet;
+ import java.util.Set;
+ 
+-
+ @Entity
+ @Table(name = "Customer")
++@Getter
++@Setter
+ public class Customer {
+     @Id
+     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_seq")
+Index: src/main/java/com/example/demo/entities/User.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/demo/entities/User.java b/src/main/java/com/example/demo/entities/User.java
+--- a/src/main/java/com/example/demo/entities/User.java	(revision 1fcb8d518e9c5a2722abe6f5531248e4fc32ac34)
++++ b/src/main/java/com/example/demo/entities/User.java	(date 1706798533486)
+@@ -2,10 +2,13 @@
+ 
+ 
+ import jakarta.persistence.*;
+-
++import lombok.Getter;
++import lombok.Setter;
+ 
+ @Entity
+ @Table(name = "User0")
++@Getter
++@Setter
+ public class User {
+     @Id
+     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
+Index: src/main/java/com/example/demo/services/CustomerServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/demo/services/CustomerServiceImpl.java b/src/main/java/com/example/demo/services/CustomerServiceImpl.java
+--- a/src/main/java/com/example/demo/services/CustomerServiceImpl.java	(revision 1fcb8d518e9c5a2722abe6f5531248e4fc32ac34)
++++ b/src/main/java/com/example/demo/services/CustomerServiceImpl.java	(date 1706798533474)
+@@ -2,20 +2,16 @@
+ 
+ import com.example.demo.entities.Customer;
+ import com.example.demo.repositories.CustomerRepository;
+-import org.springframework.beans.factory.annotation.Autowired;
++import lombok.RequiredArgsConstructor;
+ import org.springframework.stereotype.Service;
+ import org.springframework.transaction.annotation.Transactional;
+ 
+ @Service
++@RequiredArgsConstructor
+ public class CustomerServiceImpl implements CustomerService {
+ 
+     private final CustomerRepository customerRepository;
+ 
+-    @Autowired
+-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+-        this.customerRepository = customerRepository;
+-    }
+-
+     @Override
+     @Transactional
+     public Customer createCustomer(String name) {
